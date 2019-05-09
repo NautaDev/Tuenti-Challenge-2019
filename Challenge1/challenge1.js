@@ -45,13 +45,13 @@ module.exports.start = function(input){
 
     // In this challenge the first element is a single number with the length of the input array (maybe it is useful in cases like loading the file in other languages)
     // It is called C, we could not use it since we can use length but... we are going to use it anyways, just to do it as everyone
-    let C = input[0];
+    let C = parseInt(input[0]);
     // Now we need an array with just the items which are pairs so let's parse the input var
     let inputData = [];
     for(let i=1;i<=C && i<input.length;i++){
         let currentItem = input[i];
         // The question use the name N for the first item in the pair and M for the second one, we will do the same
-        inputData.push({n:currentItem.x,m:currentItem.y});
+        inputData.push({n:parseInt(currentItem.x),m:parseInt(currentItem.y)});
         // Of course, this is not really safe, as I said before we should do a lot of validation to avoid potential errors in our input
         // But right now this is just a working code, not a perfect code
     }

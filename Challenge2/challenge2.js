@@ -68,6 +68,70 @@
 module.exports.start = function(input){
     // We will expect the input is already valid, maybe a good todo is:
     // TODO: Check the input is valid
-    console.dir(input);
+    //console.dir(input);
+
+    // This var is the number of cases of the input file
+    let nCases = parseInt(input[0]);
+
+    // Here we store the jumps we have allowed on each case (the var called P in the sample)
+    let cases = [];
+    for(let i=1;i<=nCases&&i<input.length;i++){
+        let P = parseInt(input[i]);
+
+        // The following limit is set by the challenge
+        if(P<1 || P>200){
+            console.error("P has to be between 1 (inclusive) and 200 (exclusive). Skipping this case...");
+        }else{
+            cases.push(P);
+        }
+    }
+
+    // The following thing we will do is to parse the tree we had in the input to an array with each complete path as an item
+    // I know, there are better ways to solve this challenge, but it is a challenge, we should solve it quickly, shouldn't we?
+    // In this array we will save the links of each planet
+    let planetsLinks = {};
+    //console.log((nCases+1));
+    for(let i=nCases+1;i<input.length;i++){
+        let itemArr = input[i].split(":");
+        let planet = itemArr[0];
+        let planetJumps = itemArr[1].split(',');
+
+        planetsLinks[planet] = planetJumps;
+    }
+
+    // And we create a recursive function to generate full paths starting from the Galactica item (Warning: Be sure to have only one on the array!)
+    // and ending in New Earth
+    function generateFullPath(nextPlanet,currentFullPath,maxJumps,currentJumps){
+        if(currentJumps>maxJumps){
+            return ['path_not_valid']; // This path is not valid due we did more jumps than we can!
+        }else{
+            if(nextPlanet==='New Earth'){
+                let ret = [];
+                currentFullPath=currentFullPath+":New Earth";
+                ret.push(currentFullPath);
+                return ret; // Here ends the recursivity!!
+            }else{
+                let fullPathsArray = [];
+                planetsLinks[nextPlanet].forEach(function(jump){
+                    let ret = generateFullPath(jump,currentFullPath+":"+nextPlanet,maxJumps,currentJumps+1);
+                    ret.forEach(function(item){
+                        // We add just the valid paths for the max number of jumps!
+                        if(item!='path_not_valid'){
+                            fullPathsArray.push(item);
+                        }
+                    });
+                });
+    
+                return fullPathsArray;
+            }
+        }
+    }
+
+    // Now we can generate all the possible full paths between the Galactica and New Earth for each case
+    for(let tCase = 1;tCase<=nCases;tCase++){
+        let caseMaxJumps = cases[tCase-1];
+        let completePaths = generateFullPath('Galactica','',caseMaxJumps,0);
+        console.log("Case #"+tCase+": "+completePaths.length);
+    }
     
 }
