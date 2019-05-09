@@ -73,35 +73,12 @@ module.exports.start = function(input){
     // This var is the number of cases of the input file
     let nCases = parseInt(input[0]);
 
-    // Here we store the jumps we have allowed on each case (the var called P in the sample)
-    let cases = [];
-    for(let i=1;i<=nCases&&i<input.length;i++){
-        let P = parseInt(input[i]);
+    // Now we have to iterate each case since each casa has its own config
+    let indexOffset = 0;
 
-        // The following limit is set by the challenge
-        if(P<1 || P>200){
-            console.error("P has to be between 1 (inclusive) and 200 (exclusive). Skipping this case...");
-        }else{
-            cases.push(P);
-        }
-    }
-
-    // The following thing we will do is to parse the tree we had in the input to an array with each complete path as an item
-    // I know, there are better ways to solve this challenge, but it is a challenge, we should solve it quickly, shouldn't we?
-    // In this array we will save the links of each planet
-    let planetsLinks = {};
-    //console.log((nCases+1));
-    for(let i=nCases+1;i<input.length;i++){
-        let itemArr = input[i].split(":");
-        let planet = itemArr[0];
-        let planetJumps = itemArr[1].split(',');
-
-        planetsLinks[planet] = planetJumps;
-    }
-
-    // And we create a recursive function to generate full paths starting from the Galactica item (Warning: Be sure to have only one on the array!)
+    // We need to create a recursive function to generate full paths starting from the Galactica item (Warning: Be sure to have only one on the array!)
     // and ending in New Earth
-    function generateFullPath(nextPlanet,currentFullPath,maxJumps,currentJumps){
+    function generateFullPath(nextPlanet,currentFullPath,maxJumps,currentJumps,planetsLinks){
         if(currentJumps>maxJumps){
             return ['path_not_valid']; // This path is not valid due we did more jumps than we can!
         }else{
@@ -113,7 +90,7 @@ module.exports.start = function(input){
             }else{
                 let fullPathsArray = [];
                 planetsLinks[nextPlanet].forEach(function(jump){
-                    let ret = generateFullPath(jump,currentFullPath+":"+nextPlanet,maxJumps,currentJumps+1);
+                    let ret = generateFullPath(jump,currentFullPath+":"+nextPlanet,maxJumps,currentJumps+1,planetsLinks);
                     ret.forEach(function(item){
                         // We add just the valid paths for the max number of jumps!
                         if(item!='path_not_valid'){
@@ -127,11 +104,44 @@ module.exports.start = function(input){
         }
     }
 
-    // Now we can generate all the possible full paths between the Galactica and New Earth for each case
+    // Finally we can iterate each case of the input
     for(let tCase = 1;tCase<=nCases;tCase++){
-        let caseMaxJumps = cases[tCase-1];
-        let completePaths = generateFullPath('Galactica','',caseMaxJumps,0);
-        console.log("Case #"+tCase+": "+completePaths.length);
-    }
-    
+        // First we have to get the max jumps allowed in the current case
+        let caseMaxJumps = parseInt(input[indexOffset+1]);
+        // And after that increase the offset to go to the next item
+        indexOffset+=2;
+
+        // Now we need to get all the planet links
+        // The following thing we will do is to parse the node graph we had in the input to an array with each complete path as an item
+        // I know, there are better ways to solve this challenge, but it is a challenge, we should solve it quickly, shouldn't we?
+        // In this array we will save the links of each planet
+        let planetsLinks = {};
+        let wasLastLineValidPlanetLink = true;
+        while(wasLastLineValidPlanetLink && indexOffset<input.length){
+            let itemArr = input[indexOffset].split(":");
+            if(itemArr.length<2){
+                // It is not a planet link item so we are now in the next case, that is not valid!
+                indexOffset--;
+                wasLastLineValidPlanetLink = false;
+            }else{
+                let planet = itemArr[0];
+                let planetJumps = itemArr[1].split(',');
+
+                planetsLinks[planet] = planetJumps;
+                indexOffset++;
+            }
+        }
+
+        // Oh, but one thing!
+        // If caseMaxJumps (that in the sample is P) is not between 1 and 200 it is not valid!
+        // We check it here and not before all the planetsLinks loop because we want to get the index of the
+        // next case whatever this case is valid or not!
+        if(caseMaxJumps<1 || caseMaxJumps>200){
+            //console.error("caseMaxJumps has to be between 1 (inclusive) and 200 (exclusive). Skipping this case...");
+            console.error("Case #"+tCase+": Not valid");
+        }else{
+            let completePaths = generateFullPath('Galactica','',caseMaxJumps,0,planetsLinks);
+            console.log("Case #"+tCase+": "+completePaths.length);
+        }
+    }    
 }
