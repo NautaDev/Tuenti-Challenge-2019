@@ -61,7 +61,7 @@ var argArr = [];
 
 // With this code we load the entire file in a temporal var, each not empty line as an item
 // Note: This is not recommended when loading huge files but for this it is OK
-let temporalArg = fs.readFileSync(inputFilePath,'utf-8').split('\n').filter(Boolean);
+let temporalArg = fs.readFileSync(inputFilePath,'utf-8').split(/\r\n|\r|\n/).filter(Boolean);
 
 // Now we need to parse that input
 temporalArg.forEach(function(item){
@@ -70,12 +70,12 @@ temporalArg.forEach(function(item){
 
     if(itemArr.length<1){
         console.log("Skipping this line, it is not valid!");
-    }else if(itemArr.length>=2){
+    }else if(itemArr.length>=2 && challengeNumber!=2){
         // We only parse the first two items of this line, why did you enter more???
         argArr.push({x:itemArr[0],y:itemArr[1]});
     }else{
-        // This can only be itemArr.length === 1
-        argArr.push(itemArr[0]);
+        // This can only be itemArr.length === 1 or some challenge who doesn't have keys
+        argArr.push(item);
     }
 });
 
@@ -83,6 +83,9 @@ temporalArg.forEach(function(item){
 switch(challengeNumber){
     case 1:
         require('./Challenge1/challenge1').start(argArr);
+        break;
+    case 2:
+        require('./Challenge2/challenge2').start(argArr);
         break;
     default:
         console.error("You should never reach this point, now you are here so how are you? :)");

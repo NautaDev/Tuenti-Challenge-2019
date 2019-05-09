@@ -1,7 +1,0 @@
-var C = 0;
-var casesArray = [];
-function loadCases(input){console.log("TODO: Load data");C=3;casesArray=[];casesArray.push({n:2,m:2});casesArray.push({n:3,m:2});casesArray.push({n:0,m:1});}
-function calculateTortillas(){if(C<1||C>100){console.error("C must be between 1 and 100");return;}for(var i=1;i<=C;i++){let currentElement = casesArray[i-1];let N = currentElement.n;let M = currentElement.m;if(N>=0&&M>=0&&N<=100000&&M<=100000&&(N+M)>=1){let tortillas = 0;tortillas+=Math.trunc(N/2);if(N%2!=0){tortillas+=1;}tortillas+=Math.trunc(M/2);if(M%2!=0){tortillas+=1;}console.log("Case #"+i+": "+tortillas);}else{console.log("Case #"+i+": Not valid");}}}
-
-loadCases();
-calculateTortillas();
