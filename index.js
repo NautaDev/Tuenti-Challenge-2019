@@ -61,11 +61,10 @@ var argArr = [];
 
 // With this code we load the entire file in a temporal var, each not empty line as an item
 // Note: This is not recommended when loading huge files but for this it is OK
-let temporalArg = fs.readFileSync(inputFilePath,'utf-8').split('\r\n').filter(Boolean);
+let temporalArg = fs.readFileSync(inputFilePath,'utf-8').split('\n').filter(Boolean);
 
 // Now we need to parse that input
 temporalArg.forEach(function(item){
-    console.log(item);
     let itemArr = item.split(' ');
     let itemToPush = undefined;
 
@@ -80,12 +79,10 @@ temporalArg.forEach(function(item){
     }
 });
 
-//console.dir(argArr);
-
 // And now send it to the right challenge
 switch(challengeNumber){
     case 1:
-        console.log("Starting challenge 1");
+        require('./Challenge1/challenge1').start(argArr);
         break;
     default:
         console.error("You should never reach this point, now you are here so how are you? :)");
