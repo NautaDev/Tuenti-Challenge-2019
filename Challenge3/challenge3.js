@@ -123,10 +123,84 @@ module.exports.start = function(input){
                 punches.push({x:parseInt(tmpArr[0]),y:parseInt(tmpArr[1])});
             }
             // And update the indexOffset
-            indexOffset+=foldedPaperData.P;
+            indexOffset+=(1+foldedPaperData.F+foldedPaperData.P);
 
             // Now we have everything loaded, we can start working!!!
             // ...
+
+            // First we create a matrix filled with 0s (it means the paper is not punched in any position)
+            // Don't use the following one system or you will question your sanity as explained here: https://stackoverflow.com/a/47057799
+            //let paperMatrix = Array(foldedPaperData.H).fill(Array(foldedPaperData.W).fill(0));
+            // Better use this system:
+            let paperMatrix = new Array();
+            for(let iRow=0;iRow<foldedPaperData.H;iRow++){
+                paperMatrix[iRow] = [];
+                for(let iColumn=0;iColumn<foldedPaperData.W;iColumn++){
+                    paperMatrix[iRow].push(0);
+                }
+            }
+
+            // Let's code first than anything some function to work with that matrix
+            function getValAtPos(matrix,x,y){
+                return matrix[y][x];
+            }
+
+            function setValAtPos(matrix,x,y,val){
+                matrix[y][x]=val;
+            }
+
+            function unfoldVertically(matrix,x,y){
+                let newMatrix = Array(2*y).fill(Array(x).fill(0));
+                let newYSize = y*2;
+                for(let mY=0;mY<y;mY++){
+                    for(let mX=0;mX<x;mX++){
+                        let posVal = getValAtPos(matrix,mX,mY);
+                        if(posVal==1){
+                            let yNew = y+mY;
+                            let yNewUnfolded = newYSize-1-yNew;
+                            setValAtPos(newMatrix,mX,yNew,1);
+                            setValAtPos(newMatrix,mX,yNewUnfolded,1);
+                        }
+                    }
+                }
+                return newMatrix;
+            }
+
+            function unfoldHorizontally(matrix,x,y){
+                let newMatrix = new Array(y).fill(Array(2*x).fill(0));
+                let newXSize = x*2;
+                for(let mY=0;mY<y;mY++){
+                    for(let mX=0;mX<x;mX++){
+                        let posVal = getValAtPos(matrix,mX,mY);
+                        if(posVal==1){
+                            let xNew = newXSize-1-mX;
+                            let xNewUnfolded = newXSize-1-xNew;
+                            setValAtPos(newMatrix,xNew,mY,1);
+                            setValAtPos(newMatrix,xNewUnfolded,mY,1);
+                        }
+                    }
+                }
+                return newMatrix;
+            }
+
+            function printMatrix(matrix,x,y){
+                matrix.forEach(function(row){
+                    let lineM = '';
+                    row.forEach(function(item){
+                        if(item==1){
+                            lineM=lineM+"o";
+                        }else{
+                            lineM=lineM+"x";
+                        }
+                    });
+                    console.log(lineM);
+                    //console.dir(row);
+                });
+            }
+
+
+            printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
+            
 
         }else{
             console.error("Case #"+tCase+": Not valid");
