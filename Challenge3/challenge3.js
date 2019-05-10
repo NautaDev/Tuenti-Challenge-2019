@@ -85,5 +85,54 @@ module.exports.start = function(input){
     // We will expect the input is already valid, maybe a good todo is:
     // TODO: Check the input is valid
 
-    console.dir(input);
+    // So we know the first item of the input is N, an integer with the number of cases of the input file
+    // Let's save it
+    let N = parseInt(input[0]);
+
+    // Now we have to iterate each case. We will use a similar system like the one used in the Challenge 2
+    let indexOffset = 0;
+    
+    for(let tCase = 1;tCase<=N && indexOffset<input.length;tCase++){
+        // We know the first item on each case is the folded paper data, so let's parse it
+        let tmpArr = input[indexOffset+1].split(' ');
+        let foldedPaperData = {W:parseInt(tmpArr[0]),H:parseInt(tmpArr[1]),F:parseInt(tmpArr[2]),P:parseInt(tmpArr[3])};
+
+        // There are some limits in the folded paper data var we have to check
+        if((foldedPaperData.W>0 && foldedPaperData.W<10000) &&
+            (foldedPaperData.H>0 && foldedPaperData.H<10000) &&
+            (foldedPaperData.F>=0 && foldedPaperData.F<16) &&
+            (foldedPaperData.P>=0 && foldedPaperData.P<100)){
+
+            // Everything is valid, we can continue!
+            // Code...
+            // And after that increase the offset to go to the next item
+            indexOffset+=2;
+
+            // Now iterate the Folds we have to perform
+            let folds = [];
+            for(let iFold = indexOffset;iFold<indexOffset+foldedPaperData.F;iFold++){
+                folds.push(input[iFold]);
+            }
+            // Once we have iterated every fold, update the indexOffset
+            indexOffset+=foldedPaperData.F;
+
+            // Now iterate the Punches we have to perform
+            let punches = [];
+            for(let iPunch = indexOffset;iPunch<indexOffset+foldedPaperData.P;iPunch++){
+                let tmpArr = input[iPunch].split(' ');
+                punches.push({x:parseInt(tmpArr[0]),y:parseInt(tmpArr[1])});
+            }
+            // And update the indexOffset
+            indexOffset+=foldedPaperData.P;
+
+            // Now we have everything loaded, we can start working!!!
+            // ...
+
+        }else{
+            console.error("Case #"+tCase+": Not valid");
+            // Since this case is not valid, we update the indexOffset var to the next case
+            // This is not really safe and could go really wrong, maybe TODO: Check this since for example negative numbers will break this
+            indexOffset+=(1+foldedPaperData.F+foldedPaperData.P);
+        }
+    }
 }
