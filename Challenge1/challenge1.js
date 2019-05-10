@@ -1,5 +1,5 @@
 // Tuenti Challenge 2019 - Challenge 1
-// URL: https://contest.tuenti.net/Challenges
+// URL: https://contest.tuenti.net/Challenges?id=1
 // Text of the challenge (in case the URL dies)
 // Challenge 1 - Onion wars
 // You are celebrating your 20 months anniversary at Tuenti today! As part of the celebration,
