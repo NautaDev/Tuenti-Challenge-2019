@@ -82,12 +82,9 @@ temporalArg.forEach(function(item){
     let itemToPush = undefined;
 
     if(itemArr.length<1){
+        // We shouldn't reach this, so maybe we can delete this?
         console.log("Skipping this line, it is not valid!");
-    }else if(itemArr.length>=2 && challengeNumber!=2){
-        // We only parse the first two items of this line, why did you enter more???
-        argArr.push({x:itemArr[0],y:itemArr[1]});
     }else{
-        // This can only be itemArr.length === 1 or some challenge who doesn't have keys
         argArr.push(item);
     }
 });
@@ -99,6 +96,9 @@ switch(challengeNumber){
         break;
     case 2:
         require('./Challenge2/challenge2').start(argArr);
+        break;
+    case 3:
+        require('./Challenge3/challenge3').start(argArr);
         break;
     default:
         console.error("You should never reach this point, now you are here so how are you? :)");

@@ -49,9 +49,9 @@ module.exports.start = function(input){
     // Now we need an array with just the items which are pairs so let's parse the input var
     let inputData = [];
     for(let i=1;i<=C && i<input.length;i++){
-        let currentItem = input[i];
+        let currentItem = input[i].split(' ');
         // The question use the name N for the first item in the pair and M for the second one, we will do the same
-        inputData.push({n:parseInt(currentItem.x),m:parseInt(currentItem.y)});
+        inputData.push({n:parseInt(currentItem[0]),m:parseInt(currentItem[1])});
         // Of course, this is not really safe, as I said before we should do a lot of validation to avoid potential errors in our input
         // But right now this is just a working code, not a perfect code
     }
