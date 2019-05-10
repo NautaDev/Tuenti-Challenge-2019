@@ -6,9 +6,10 @@ var fs = require('fs');
 // Also we have to use the readline module to help to parse the input files
 var readline = require('readline');
 
-// There are two args:
+// There are three args:
 // -f "path" is used when the challenge needs an input file
 // -c # is used to specify the challenge to do (between 1-9)
+// -h is used to show some help about how to use this program
 
 var challengeNumber = undefined;
 var inputFilePath = undefined;
