@@ -132,13 +132,7 @@ module.exports.start = function(input){
             // Don't use the following one system or you will question your sanity as explained here: https://stackoverflow.com/a/47057799
             //let paperMatrix = Array(foldedPaperData.H).fill(Array(foldedPaperData.W).fill(0));
             // Better use this system:
-            let paperMatrix = new Array();
-            for(let iRow=0;iRow<foldedPaperData.H;iRow++){
-                paperMatrix[iRow] = [];
-                for(let iColumn=0;iColumn<foldedPaperData.W;iColumn++){
-                    paperMatrix[iRow].push(0);
-                }
-            }
+            let paperMatrix = generateMatrix(foldedPaperData.W,foldedPaperData.H,0);
 
             // Let's code first than anything some function to work with that matrix
             function getValAtPos(matrix,x,y){
@@ -149,15 +143,16 @@ module.exports.start = function(input){
                 matrix[y][x]=val;
             }
 
-            function unfoldVertically(matrix,x,y){
-                let newMatrix = Array(2*y).fill(Array(x).fill(0));
-                let newYSize = y*2;
+            function unfoldTop(matrix,x,y){
+                let newMaxY = y*2;
+                let newMatrix = generateMatrix(x,newMaxY,0);
+
                 for(let mY=0;mY<y;mY++){
                     for(let mX=0;mX<x;mX++){
                         let posVal = getValAtPos(matrix,mX,mY);
                         if(posVal==1){
-                            let yNew = y+mY;
-                            let yNewUnfolded = newYSize-1-yNew;
+                            let yNew = mY+y;
+                            let yNewUnfolded = newMaxY-1-yNew;
                             setValAtPos(newMatrix,mX,yNew,1);
                             setValAtPos(newMatrix,mX,yNewUnfolded,1);
                         }
@@ -166,15 +161,52 @@ module.exports.start = function(input){
                 return newMatrix;
             }
 
-            function unfoldHorizontally(matrix,x,y){
-                let newMatrix = new Array(y).fill(Array(2*x).fill(0));
-                let newXSize = x*2;
+            function unfoldBottom(matrix,x,y){
+                let newMaxY = y*2;
+                let newMatrix = generateMatrix(x,newMaxY,0);
+
                 for(let mY=0;mY<y;mY++){
                     for(let mX=0;mX<x;mX++){
                         let posVal = getValAtPos(matrix,mX,mY);
                         if(posVal==1){
-                            let xNew = newXSize-1-mX;
-                            let xNewUnfolded = newXSize-1-xNew;
+                            let yNew = mY;
+                            let yNewUnfolded = newMaxY-1-mY;
+                            setValAtPos(newMatrix,mX,yNew,1);
+                            setValAtPos(newMatrix,mX,yNewUnfolded,1);
+                        }
+                    }
+                }
+                return newMatrix;
+            }
+
+            function unfoldRight(matrix,x,y){
+                let newMaxX = x*2;
+                let newMatrix = generateMatrix(newMaxX,y,0);
+
+                for(let mY=0;mY<y;mY++){
+                    for(let mX=0;mX<x;mX++){
+                        let posVal = getValAtPos(matrix,mX,mY);
+                        if(posVal==1){
+                            let xNew = mX;
+                            let xNewUnfolded = newMaxX-1-mX;
+                            setValAtPos(newMatrix,xNew,mY,1);
+                            setValAtPos(newMatrix,xNewUnfolded,mY,1);
+                        }
+                    }
+                }
+                return newMatrix;
+            }
+
+            function unfoldLeft(matrix,x,y){
+                let newMaxX = x*2;
+                let newMatrix = generateMatrix(newMaxX,y,0);
+
+                for(let mY=0;mY<y;mY++){
+                    for(let mX=0;mX<x;mX++){
+                        let posVal = getValAtPos(matrix,mX,mY);
+                        if(posVal==1){
+                            let xNew = mX+x;
+                            let xNewUnfolded = newMaxX-1-xNew;
                             setValAtPos(newMatrix,xNew,mY,1);
                             setValAtPos(newMatrix,xNewUnfolded,mY,1);
                         }
@@ -194,13 +226,33 @@ module.exports.start = function(input){
                         }
                     });
                     console.log(lineM);
-                    //console.dir(row);
                 });
+            }
+
+            function generateMatrix(x,y,fill){
+                let matrix = new Array();
+                for(let iRow=0;iRow<y;iRow++){
+                    matrix[iRow] = [];
+                    for(let iColumn=0;iColumn<x;iColumn++){
+                        matrix[iRow].push(fill);
+                    }
+                }
+                return matrix;
             }
 
 
             printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
-            
+
+            // Now place on that matrix the punches
+            punches.forEach(function(punch){
+                setValAtPos(paperMatrix,punch.x,punch.y,1);
+            });
+            printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
+
+            // Now performs the unfolds
+            folds.forEach(function(fold){
+
+            });
 
         }else{
             console.error("Case #"+tCase+": Not valid");
