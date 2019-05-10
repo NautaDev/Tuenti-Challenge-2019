@@ -13,6 +13,18 @@ var readline = require('readline');
 var challengeNumber = undefined;
 var inputFilePath = undefined;
 
+if("h" in argv){
+    console.log("Call this file with two args:");
+    console.log("-c number_of_the_challenge");
+    console.log("and -f path_to_input_file");
+    console.log("For example, for the challenge 1 using the file sample.txt located in the project folder called Challenge1, you would type:");
+    console.log("node index.js -c 1 -f ./Challenge1/sample.txt");
+    console.log("If you need more help, check the GitHub repo:");
+    console.log("https://github.com/NautaDev/Tuenti-Challenge-2019");
+    // End the program without errors!
+    process.exit(0);
+}
+
 // Check if the challenge is specified
 if(!("c" in argv)){
     console.error("You need to specify the challenge. Use -c #");
