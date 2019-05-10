@@ -126,7 +126,6 @@ module.exports.start = function(input){
             indexOffset+=(1+foldedPaperData.F+foldedPaperData.P);
 
             // Now we have everything loaded, we can start working!!!
-            // ...
 
             // First we create a matrix filled with 0s (it means the paper is not punched in any position)
             // Don't use the following one system or you will question your sanity as explained here: https://stackoverflow.com/a/47057799
@@ -158,7 +157,7 @@ module.exports.start = function(input){
                         }
                     }
                 }
-                return newMatrix;
+                return [newMatrix,x,newMaxY];
             }
 
             function unfoldBottom(matrix,x,y){
@@ -176,7 +175,7 @@ module.exports.start = function(input){
                         }
                     }
                 }
-                return newMatrix;
+                return [newMatrix,x,newMaxY];
             }
 
             function unfoldRight(matrix,x,y){
@@ -194,7 +193,7 @@ module.exports.start = function(input){
                         }
                     }
                 }
-                return newMatrix;
+                return [newMatrix,newMaxX,y];
             }
 
             function unfoldLeft(matrix,x,y){
@@ -212,7 +211,7 @@ module.exports.start = function(input){
                         }
                     }
                 }
-                return newMatrix;
+                return [newMatrix,newMaxX,y];
             }
 
             function printMatrix(matrix,x,y){
@@ -241,18 +240,77 @@ module.exports.start = function(input){
             }
 
 
-            printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
+            //printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
 
             // Now place on that matrix the punches
             punches.forEach(function(punch){
                 setValAtPos(paperMatrix,punch.x,punch.y,1);
             });
-            printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
+            //printMatrix(paperMatrix,foldedPaperData.W,foldedPaperData.H);
+
+            // Let's save the matrix size as new vars, to use them soon
+            let matrixXSize = foldedPaperData.W;
+            let matrixYSize = foldedPaperData.H;
 
             // Now performs the unfolds
             folds.forEach(function(fold){
-
+                let ret = undefined;
+                switch(fold){
+                    case 'L':
+                        ret = unfoldLeft(paperMatrix,matrixXSize,matrixYSize);
+                        paperMatrix = ret[0];
+                        matrixXSize = ret[1];
+                        matrixYSize = ret[2];
+                        break;
+                    case 'R':
+                        ret = unfoldRight(paperMatrix,matrixXSize,matrixYSize);
+                        paperMatrix = ret[0];
+                        matrixXSize = ret[1];
+                        matrixYSize = ret[2];
+                        break;
+                    case 'T':
+                        ret = unfoldTop(paperMatrix,matrixXSize,matrixYSize);
+                        paperMatrix = ret[0];
+                        matrixXSize = ret[1];
+                        matrixYSize = ret[2];
+                        break;
+                    case 'B':
+                        ret = unfoldBottom(paperMatrix,matrixXSize,matrixYSize);
+                        paperMatrix = ret[0];
+                        matrixXSize = ret[1];
+                        matrixYSize = ret[2];
+                        break;
+                    default:
+                        // Noone should reach this point -_(·.·)_-
+                        break;
+                }
             });
+                //printMatrix(paperMatrix,matrixXSize,matrixYSize);
+
+                // And now we create an array with all the holes coords in the matrix
+                let matrixHoles = [];
+                let tmpX = 0;
+                let tmpY = 0;
+                paperMatrix.forEach(function(row){
+                    tmpX = 0;
+                    row.forEach(function(item){
+                        if(item==1){
+                            // It is a hole!
+                            matrixHoles.push({x:tmpX,y:tmpY});
+                        }
+                        tmpX+=1;
+                    });
+                    tmpY+=1;
+                });
+
+                //console.dir(matrixHoles);
+                //return;
+
+                // Finally, print the solution of the current case:
+                console.log("Case #"+tCase+":");
+                matrixHoles.forEach(function(hole){
+                    console.log(hole.x+" "+hole.y);
+                });
 
         }else{
             console.error("Case #"+tCase+": Not valid");
